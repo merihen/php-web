@@ -29,11 +29,21 @@ jobs:
         sudo apt-get install -y libjpeg-dev libpng-dev libfreetype6-dev
         sudo apt-get install -y php7.4-gd  # Adjust the PHP version as needed
 
+    # - name: Validate WordPress Coding Standards
+    #   run: |
+    #     composer global require wp-coding-standards/wpcs
+    #     phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+    #     phpcs --standard=WordPress --extensions=php --ignore=*/tests/*,*/vendor/* .
+
+
+    - name: Configure Composer to Allow Plugins
+        run: composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+
     - name: Validate WordPress Coding Standards
-      run: |
-        composer global require wp-coding-standards/wpcs
-        phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-        phpcs --standard=WordPress --extensions=php --ignore=*/tests/*,*/vendor/* .
+        run: |
+          composer global require wp-coding-standards/wpcs
+          phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+          phpcs --standard=WordPress --extensions=php --ignore=*/tests/*,*/vendor/* .
 
     - name: Run PHPUnit Tests
       run: |
