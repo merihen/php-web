@@ -1,18 +1,41 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+name: WordPress CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  Explore-GitHub-Actions:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        extensions: mbstring, intl, gd, xml, dom, json, fileinfo, curl, zip, bz2, soap, pdo_mysql, mysqli
+        coverage: none
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get install -y libjpeg-dev libpng-dev libfreetype6-dev
+        sudo docker-php-ext-configure gd --with-freetype --with-jpeg
+        sudo docker-php-ext-install gd
+
+    - name: Validate WordPress Coding Standards
+      run: |
+        composer global require wp-coding-standards/wpcs
+        phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+        phpcs --standard=WordPress --extensions=php --ignore=*/tests/*,*/vendor/* .
+
+    - name: Run PHPUnit Tests
+      run: |
+        composer install
+        ./vendor/bin/phpunit 
