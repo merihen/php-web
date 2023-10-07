@@ -13,13 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up SSH key
+        run: |
+          # teeeeeeeeeeeeeeeeeeeeeeeeeeest ssh keys
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 174.138.4.14 >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Deploy to Cloudways
         run: |
-          # Add your deployment script or commands here
-          # Use SSH to transfer your code to the Cloudways server
-          # Example:
-          echo  ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh -i  ${{ secrets.SSH_PRIVATE_KEY }} master_wbfbpatrqu@174.138.4.14
-          ssh master_wbfbpatrqu@174.138.4.14 'bash -s' < deploy-script.sh
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@174.138.4.14
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@174.138.4.14 'bash -s' < deploy-script.sh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
