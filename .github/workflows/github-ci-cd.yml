@@ -18,7 +18,7 @@ jobs:
           # Add your deployment script or commands here
           # Use SSH to transfer your code to the Cloudways server
           # Example:
-          ssh master_wbfbpatrqu@174.138.4.14
+          ssh -o StrictHostKeyChecking=no master_wbfbpatrqu@174.138.4.14
           ssh master_wbfbpatrqu@174.138.4.14 'bash -s' < deploy-script.sh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
