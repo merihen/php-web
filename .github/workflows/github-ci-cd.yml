@@ -24,13 +24,16 @@ jobs:
 
       - name: Deploy to Cloudways
         run: |
-          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CloudwaysVM
-          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CloudwaysVM 'bash -s' < deploy-script.sh
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CLOUDWAYS
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CLOUDWAYS 'bash -s' < deploy-script.sh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          CLOUDWAYS: ${{ vars.CLOUDWAYS }}
           
       - name: Run Backup Script on Cloudways Server
         run: |
           echo $GITHUB_WORKSPACE
           ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CloudwaysVM 'bash -s' <  $GITHUB_WORKSPACE/backup.sh
+        env:
+          CLOUDWAYS: ${{ vars.CLOUDWAYS }}
 
