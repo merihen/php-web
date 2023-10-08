@@ -29,3 +29,8 @@ jobs:
           ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@174.138.4.14 'bash -s' < deploy-script.sh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          
+      - name: Run Backup Script on Cloudways Server
+        run: |
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@174.138.4.14 'bash -s' <  ~/backup.sh
+
