@@ -19,19 +19,20 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 174.138.4.14 >> ~/.ssh/known_hosts
+          ssh-keyscan -H CloudwaysVM >> ~/.ssh/known_hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          CloudwaysVM: ${{ vars.CloudwaysVM }}
 
       - name: Deploy to Cloudways
         run: |
-          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@174.138.4.14
-          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@174.138.4.14 'bash -s' < deploy-script.sh
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CloudwaysVM
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CloudwaysVM 'bash -s' < deploy-script.sh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           
       - name: Run Backup Script on Cloudways Server
         run: |
           echo $GITHUB_WORKSPACE
-          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@174.138.4.14 'bash -s' <  $GITHUB_WORKSPACE/backup.sh
+          ssh -i ~/.ssh/id_rsa master_wbfbpatrqu@CloudwaysVM 'bash -s' <  $GITHUB_WORKSPACE/backup.sh
 
