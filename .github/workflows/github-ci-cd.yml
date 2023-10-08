@@ -4,8 +4,20 @@ on:
   push:
     branches:
       - test
-
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Build WordPress Assets
+        run: |
+          cd $GITHUB_WORKSPACE/wp-content/themes
+          npm install
+          npm run build
+
   deploy:
     runs-on: ubuntu-latest
 
